@@ -5,7 +5,7 @@
     <style>
       .sudoku {
         display: inline-block;
-       /* margin: 30px;
+        /*margin: 30px;
         margin-top: 5px;
         margin-bottom: 5px;
         left: 30%;
@@ -14,21 +14,21 @@
         width: 33%;
       }
 
-        .sudoku table {
-            text-align: center;
-            border-collapse: separate;
-            /* 使用独立的边框，使分隔线可以自定义样式 */
-            border-spacing: 1px;
-            /* 设置每个方框之间的距离 */
-            font-size: 1px;
-            margin-bottom: 5px;
-            margin: auto;
-            width: 90%;
-            height: 90%;
-        }
+      .sudoku table {
+        text-align: center;
+        border-collapse: separate;
+        /* 使用独立的边框，使分隔线可以自定义样式 */
+        border-spacing: 1px;
+        /* 设置每个方框之间的距离 */
+        font-size: 2px;
+        margin-bottom: 5px;
+        margin: auto;
+        width: 85%;
+        height: 90%;
+      }
 
       td {
-        padding: 2px;
+        padding: 3px;
         /* 调整方框内的内边距 */
         background-color: rgba(255, 255, 255, 0.8);
         /* 设置方框的背景颜色及透明度 */
@@ -36,8 +36,15 @@
 
       th,
       td {
-        border: 1px solid green;
-        /* 设定方框的边框粗细和颜色 */
+        border: 1px solid rgb(13, 150, 13);
+      }
+
+      .bottom-border {
+        border-bottom: 3px solid rgb(13, 150, 13);
+      }
+
+      .right-border {
+        border-right: 3px solid rgb(13, 150, 13);
       }
 
       th {
@@ -48,14 +55,14 @@
       td {
         width: 30px;
         height: 30px;
-        border: 1px solid #3d373760;
+        border: 1px solid #13c90f60;
       }
 
       input {
         width: 100%;
         height: 100%;
-        font-size: 15px;
-        background-color: rgba(255, 255, 255, 0.8);
+        font-size: 18px;
+        background-color: rgba(255, 255, 255, 0.1);
         border: none;
         text-align: center;
         font-weight: bold;
@@ -95,14 +102,14 @@
         margin-left: 40px;
         cursor: pointer;
         width: 50px;
-        height: 43px;
+        height: 37px;
         cursor: pointer;
         display: inline-flex;
-        align-items: flex-start;
-        justify-content: flex-start;
         background-size: cover;
         background-color: transparent;
         background-image: url("images/icon_eyu.png");
+        align-items: center;
+        line-height: 50px;
       }
 
       .text {
@@ -144,6 +151,7 @@
         color: #3d3737;
         font-family: "Times New Roman", Times, serif;
         margin-top: 20px;
+        letter-spacing: 10px; /* 调整字间距的数值 */
       }
 
       h2 {
@@ -409,36 +417,6 @@
         return true;
       }
 
-      // 用于清空表格
-      function renderClearBoard(board, index) {
-        var table = document.getElementById("board-" + (index + 1));
-        table.innerHTML = "";
-
-        for (var i = 0; i < 9; i++) {
-          var row = document.createElement("tr");
-
-          for (var j = 0; j < 9; j++) {
-            var cell = document.createElement("td");
-            var input = document.createElement("input");
-
-            if (board[i][j] !== null) {
-              input.value = board[i][j];
-              input.classList.add("readonly");
-              input.readOnly = true;
-            }
-            cell.appendChild(input);
-            row.appendChild(cell);
-          }
-
-          table.appendChild(row);
-        }
-      }
-
-      // 清空数独面板
-      function clearBoard(index) {
-        renderClearBoard(board_ini[index], index);
-      }
-
       // 初始化数独游戏
       window.onload = function () {
         var submit = document.createElement("div");
@@ -449,6 +427,9 @@
         var text3 = document.createElement("span");
         text3.innerText = "提交";
         text3.className = "text";
+        text3.addEventListener("click", function () {
+          button1.click(); // 触发按钮的点击事件
+        });
         submit.appendChild(button1);
         submit.appendChild(text3);
 
@@ -463,6 +444,9 @@
         var text4 = document.createElement("span");
         text4.innerText = "草稿板";
         text4.className = "text";
+        text4.addEventListener("click", function () {
+          button3.click(); // 触发按钮的点击事件
+        });
         draftBoard.appendChild(button3);
         draftBoard.appendChild(text4);
 
@@ -487,7 +471,9 @@
           var text1 = document.createElement("span");
           text1.innerText = "清空";
           text1.className = "text";
-
+          text1.addEventListener("click", function () {
+            button2.click(); // 触发按钮的点击事件
+          });
           clear.appendChild(button2);
           clear.appendChild(text1);
 
@@ -496,13 +482,14 @@
 
           var button4 = document.createElement("button");
           button4.innerText = "";
-          button4.index = i;
           button4.addEventListener("click", showSolution.bind(null, i));
 
           var text2 = document.createElement("span");
           text2.innerText = "查看解答";
           text2.className = "text";
-
+          text2.addEventListener("click", function () {
+            button4.click(); // 触发按钮的点击事件
+          });
           answer.appendChild(button4);
           answer.appendChild(text2);
 
@@ -515,6 +502,42 @@
 
         generateBoards();
       };
+
+      // 用于清空表格
+      function renderClearBoard(board, index) {
+        var table = document.getElementById("board-" + (index + 1));
+        table.innerHTML = "";
+
+        for (var i = 0; i < 9; i++) {
+          var row = document.createElement("tr");
+
+          for (var j = 0; j < 9; j++) {
+            var cell = document.createElement("td");
+            if (i == 2 || i == 5) {
+              cell.className = "bottom-border";
+            }
+            if (j == 2 || j == 5) {
+              cell.className = "right-border";
+            }
+            var input = document.createElement("input");
+
+            if (board[i][j] !== null) {
+              input.value = board[i][j];
+              input.classList.add("readonly");
+              input.readOnly = true;
+            }
+            cell.appendChild(input);
+            row.appendChild(cell);
+          }
+
+          table.appendChild(row);
+        }
+      }
+
+      // 清空数独面板
+      function clearBoard(index) {
+        renderClearBoard(board_ini[index], index);
+      }
 
       // 显示数独面板的解答
       function showSolution(index) {
@@ -571,11 +594,15 @@
 
         for (var i = 0; i < 9; i++) {
           var row = document.createElement("tr");
-
           for (var j = 0; j < 9; j++) {
             var cell = document.createElement("td");
             var input = document.createElement("input");
-
+            if (i == 2 || i == 5) {
+              cell.className = "bottom-border";
+            }
+            if (j == 2 || j == 5) {
+              cell.className = "right-border";
+            }
             if (board[i][j] !== null) {
               input.value = board[i][j];
               input.classList.add("readonly");

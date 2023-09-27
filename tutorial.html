@@ -5,12 +5,13 @@
     <style>
       .sudoku {
         display: inline-block;
-        margin: 30px;
-        margin-top: 1px;
-        margin-bottom: 1px;
+        /*margin: 30px;
+        margin-top: 5px;
+        margin-bottom: 5px;
         left: 30%;
         top: 30%;
-        transform: translate(30%, 0%);
+        transform: translate(30%, 0%);*/
+        width: 33%;
       }
 
       .sudoku table {
@@ -19,7 +20,11 @@
         /* 使用独立的边框，使分隔线可以自定义样式 */
         border-spacing: 1px;
         /* 设置每个方框之间的距离 */
-        font-size: 1px;
+        font-size: 2px;
+        margin-bottom: 5px;
+        margin: auto;
+        width: 85%;
+        height: 90%;
       }
 
       td {
@@ -73,6 +78,8 @@
         color: #3d3737;
         font-family: "Times New Roman", Times, serif;
         margin-top: 15px;
+        margin: auto;
+        letter-spacing: 6px; /* 调整字间距的数值 */
       }
 
       h2 {
