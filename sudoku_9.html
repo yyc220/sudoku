@@ -5,23 +5,27 @@
     <style>
       .sudoku {
         display: inline-block;
-        margin: 30px;
+       /* margin: 30px;
         margin-top: 5px;
         margin-bottom: 5px;
         left: 30%;
         top: 30%;
-        transform: translate(30%, 0%);
+        transform: translate(30%, 0%);*/
+        width: 33%;
       }
 
-      .sudoku table {
-        text-align: center;
-        border-collapse: separate;
-        /* 使用独立的边框，使分隔线可以自定义样式 */
-        border-spacing: 1px;
-        /* 设置每个方框之间的距离 */
-        font-size: 1px;
-        margin-bottom: 5px;
-      }
+        .sudoku table {
+            text-align: center;
+            border-collapse: separate;
+            /* 使用独立的边框，使分隔线可以自定义样式 */
+            border-spacing: 1px;
+            /* 设置每个方框之间的距离 */
+            font-size: 1px;
+            margin-bottom: 5px;
+            margin: auto;
+            width: 90%;
+            height: 90%;
+        }
 
       td {
         padding: 2px;
@@ -60,9 +64,10 @@
       .readonly {
         background-color: rgba(0, 90, 0, 0.1);
       }
+      /* 会给提示错误颜色 */
 
       .error {
-        color: red;
+        color: black;
       }
 
       .answer button {
@@ -114,9 +119,6 @@
         width: 50px;
         height: 40px;
         cursor: pointer;
-        display: inline-flex;
-        align-items: flex-start;
-        justify-content: flex-start;
         background-size: cover;
         background-color: transparent;
         background-image: url("images/icon_star.png");
@@ -132,7 +134,7 @@
       body::after {
         content: "";
         display: block;
-        height: 230px;
+        height: 260px;
         /* 设置延伸的高度 */
       }
 
@@ -149,7 +151,7 @@
         font-size: 25px;
         color: #3d3737;
         font-family: "Times New Roman", Times, serif;
-        margin-top: 20px;
+        margin-top: 40px;
       }
     </style>
   </head>
@@ -344,42 +346,53 @@
       }
 
       // 验证用户输入
-      //   function validateInput(index, row, col) {
-      //    var input = event.target;
-      //    var num = parseInt(input.value);
+      function validateInput(index, row, col) {
+        var input = event.target;
+        var num = parseInt(input.value);
 
-      //    if (
-      //     isNaN(num) ||
-      //     num < 1 ||
-      //     num > 9 ||
-      //    !isValidMove(boards[index], row, col, num)
-      //   ) {
-      //    input.classList.add("error");
-      //   } else {
-      //     input.classList.remove("error");
-      //      boards[index][row][col] = num;
-      //    }
-      //  }
+        if (
+          isNaN(num) ||
+          num < 1 ||
+          num > 9 ||
+          !isValidMove(boards[index], row, col, num)
+        ) {
+          input.classList.add("error");
+        } else {
+          input.classList.remove("error");
+          boards[index][row][col] = num;
+        }
+      }
 
       // 提交数独面板
       function submitBoard() {
-        var isCorrect = true;
+        var isCorrect;
+
+        var incorrectQuestions = []; // 用于记录做错的题目的数组
 
         for (var i = 0; i < 9; i++) {
           var solution1 = JSON.parse(JSON.stringify(boards[i])); // 复制一份数独面板
+
           var so = solveSudoku(solution1);
-          //  var output = document.createElement("p");
-          //  output.textContent = "变量值: " + solution1.toString();
-          // document.body.appendChild(output);
 
           isCorrect = compareBoards(boards[i], solution1);
+
           if (!isCorrect) {
-            alert("游戏失败！");
-            break;
+            incorrectQuestions.push(i + 1);
           }
         }
-        if (isCorrect) {
-          alert("游戏成功！");
+
+        if (incorrectQuestions.length === 0) {
+          alert("恭喜你，全部正确！");
+        } else {
+          var incorrectMessage = "以下数独面板做错了：";
+
+          for (var i = 0; i < incorrectQuestions.length; i++) {
+            incorrectMessage += incorrectQuestions[i] + " ";
+          }
+
+          incorrectMessage += "请重新检查！";
+
+          alert(incorrectMessage);
         }
       }
 
@@ -396,13 +409,66 @@
         return true;
       }
 
+      // 用于清空表格
+      function renderClearBoard(board, index) {
+        var table = document.getElementById("board-" + (index + 1));
+        table.innerHTML = "";
+
+        for (var i = 0; i < 9; i++) {
+          var row = document.createElement("tr");
+
+          for (var j = 0; j < 9; j++) {
+            var cell = document.createElement("td");
+            var input = document.createElement("input");
+
+            if (board[i][j] !== null) {
+              input.value = board[i][j];
+              input.classList.add("readonly");
+              input.readOnly = true;
+            }
+            cell.appendChild(input);
+            row.appendChild(cell);
+          }
+
+          table.appendChild(row);
+        }
+      }
+
       // 清空数独面板
       function clearBoard(index) {
-        renderBoardForIndex(board_ini[index], index);
+        renderClearBoard(board_ini[index], index);
       }
 
       // 初始化数独游戏
       window.onload = function () {
+        var submit = document.createElement("div");
+        submit.className = "submit";
+        var button1 = document.createElement("button");
+        button1.innerText = "";
+        button1.addEventListener("click", submitBoard);
+        var text3 = document.createElement("span");
+        text3.innerText = "提交";
+        text3.className = "text";
+        submit.appendChild(button1);
+        submit.appendChild(text3);
+
+        var draftBoard = document.createElement("div");
+        draftBoard.className = "submit";
+        var button3 = document.createElement("button");
+        button3.innerText = "";
+        button3.addEventListener("click", function () {
+          myUrl = "https://www.wotianna.com/huaban/";
+          window.open(myUrl, "草稿板");
+        });
+        var text4 = document.createElement("span");
+        text4.innerText = "草稿板";
+        text4.className = "text";
+        draftBoard.appendChild(button3);
+        draftBoard.appendChild(text4);
+
+        document.body.appendChild(draftBoard);
+        document.body.appendChild(submit);
+
         for (var i = 0; i < 9; i++) {
           var sudokuDiv = document.createElement("div");
           sudokuDiv.className = "sudoku";
@@ -448,17 +514,6 @@
         }
 
         generateBoards();
-        var submit = document.createElement("div");
-        submit.className = "submit";
-        var button1 = document.createElement("button");
-        button1.innerText = "";
-        button1.addEventListener("click", submitBoard);
-        var text3 = document.createElement("span");
-        text3.innerText = "提交";
-        text3.className = "text";
-        submit.appendChild(button1);
-        submit.appendChild(text3);
-        document.body.appendChild(submit);
       };
 
       // 显示数独面板的解答
@@ -504,7 +559,8 @@
           }
           renderBoardForIndex(currentBoard, i);
           boards.push(currentBoard);
-          board_ini.push(currentBoard);
+          // 拷贝一份给board_ini
+          board_ini.push(JSON.parse(JSON.stringify(currentBoard))); ///很重要，不然会改变原来的数独面板
         }
       }
 
@@ -524,13 +580,12 @@
               input.value = board[i][j];
               input.classList.add("readonly");
               input.readOnly = true;
+            } else {
+              input.addEventListener(
+                "input",
+                validateInput.bind(null, index, i, j)
+              );
             }
-            //            else {
-            //           input.addEventListener(
-            //             "input",
-            //            validateInput.bind(null, index, i, j)
-            //         );
-            //      }
 
             cell.appendChild(input);
             row.appendChild(cell);
