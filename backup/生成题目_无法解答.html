@@ -5,151 +5,44 @@
     <style>
       .sudoku {
         display: inline-block;
-        margin: 30px;
-        margin-top: 5px;
-        margin-bottom: 5px;
-        left: 30%;
-        top: 30%;
-        transform: translate(30%, 0%);
+        margin: 10px;
       }
 
-      .sudoku table {
+      table {
         text-align: center;
-        border-collapse: separate;
-        /* 使用独立的边框，使分隔线可以自定义样式 */
-        border-spacing: 1px;
-        /* 设置每个方框之间的距离 */
-        font-size: 1px;
-        margin-bottom: 5px;
+        border-collapse: collapse;
+        font-size: 24px;
       }
 
       td {
-        padding: 2px;
-        /* 调整方框内的内边距 */
-        background-color: rgba(255, 255, 255, 0.8);
-        /* 设置方框的背景颜色及透明度 */
-      }
-
-      th,
-      td {
-        border: 1px solid green;
-        /* 设定方框的边框粗细和颜色 */
-      }
-
-      th {
-        font-weight: bold;
-        /* 设置表头加粗 */
-      }
-
-      td {
-        width: 30px;
-        height: 30px;
-        border: 1px solid #3d373760;
+        width: 40px;
+        height: 40px;
+        border: 1px solid #ccc;
       }
 
       input {
         width: 100%;
         height: 100%;
-        font-size: 15px;
-        background-color: rgba(255, 255, 255, 0.8);
+        font-size: 24px;
         border: none;
         text-align: center;
         font-weight: bold;
       }
 
       .readonly {
-        background-color: rgba(0, 90, 0, 0.1);
+        background-color: #eee;
       }
 
       .error {
         color: red;
       }
 
-      .answer button {
-        border: none;
-        position: relative;
-        margin-left: 40px;
-        cursor: pointer;
-        width: 50px;
-        height: 50px;
-        cursor: pointer;
-        display: inline-flex;
-        /* align-items: flex-start;
-        justify-content: flex-start;*/
-        background-size: cover;
-        background-color: transparent;
-        background-image: url("images/icon_biscuit.png");
-        align-items: center;
-        line-height: 50px;
-        /* 将line-height设置为按钮高度，实现垂直居中 */
-      }
-
-      .clear button {
-        border: none;
-        position: relative;
-        margin-left: 40px;
-        cursor: pointer;
-        width: 50px;
-        height: 43px;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: flex-start;
-        justify-content: flex-start;
-        background-size: cover;
-        background-color: transparent;
-        background-image: url("images/icon_eyu.png");
-      }
-
-      .text {
-        /*文本变大*/
-        font-size: 20px;
-        font-family: youyuan;
-      }
-
-      .submit button {
-        border: none;
-        position: relative;
-        margin-left: 40px;
-        cursor: pointer;
-        width: 50px;
-        height: 40px;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: flex-start;
-        justify-content: flex-start;
-        background-size: cover;
-        background-color: transparent;
-        background-image: url("images/icon_star.png");
-      }
-
-      body {
-        background-image: url("images/bg6.jpg");
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-      }
-
-      body::after {
-        content: "";
+      button {
         display: block;
-        height: 230px;
-        /* 设置延伸的高度 */
-      }
-
-      h1 {
-        text-align: center;
-        font-size: 50px;
-        color: #3d3737;
-        font-family: "Times New Roman", Times, serif;
-        margin-top: 20px;
-      }
-
-      h2 {
-        text-align: center;
-        font-size: 25px;
-        color: #3d3737;
-        font-family: "Times New Roman", Times, serif;
-        margin-top: 20px;
+        font-size: 20px;
+        margin-top: 10px;
+        padding: 10px;
+        cursor: pointer;
       }
     </style>
   </head>
@@ -179,9 +72,8 @@
       document.body.appendChild(heading);
 
       // 设置面板
-      var board_ini = [];
-      var send_solution;
-      var boards = [];
+      var board = [];
+      var solution = [];
 
       // 打乱数独面板
       function shuffleBoard(board) {
@@ -212,6 +104,17 @@
           var temp = board[i][col1];
           board[i][col1] = board[i][col2];
           board[i][col2] = temp;
+        }
+      }
+
+      // 解答数独面板
+      function solveBoard() {
+        solution = JSON.parse(JSON.stringify(board)); // 复制一份数独面板
+
+        if (solveSudoku(solution)) {
+          renderSolution();
+        } else {
+          alert("无解！");
         }
       }
 
@@ -343,43 +246,92 @@
         return true;
       }
 
-      // 验证用户输入
-      //   function validateInput(index, row, col) {
-      //    var input = event.target;
-      //    var num = parseInt(input.value);
+      // 渲染数独面板
+      function renderBoard() {
+        var table = document.getElementById("board");
+        table.innerHTML = "";
 
-      //    if (
-      //     isNaN(num) ||
-      //     num < 1 ||
-      //     num > 9 ||
-      //    !isValidMove(boards[index], row, col, num)
-      //   ) {
-      //    input.classList.add("error");
-      //   } else {
-      //     input.classList.remove("error");
-      //      boards[index][row][col] = num;
-      //    }
-      //  }
+        for (var i = 0; i < 9; i++) {
+          var row = document.createElement("tr");
+
+          for (var j = 0; j < 9; j++) {
+            var cell = document.createElement("td");
+            var input = document.createElement("input");
+
+            if (board[i][j] !== null) {
+              input.value = board[i][j];
+              input.classList.add("readonly");
+              input.readOnly = true;
+            } else {
+              input.addEventListener("input", validateInput.bind(null, i, j));
+            }
+
+            cell.appendChild(input);
+            row.appendChild(cell);
+          }
+
+          table.appendChild(row);
+        }
+      }
+
+      // 验证用户输入
+      function validateInput(row, col) {
+        var input = event.target;
+        var num = parseInt(input.value);
+
+        if (
+          isNaN(num) ||
+          num < 1 ||
+          num > 9 ||
+          !isValidMove(board, row, col, num)
+        ) {
+          input.classList.add("error");
+        } else {
+          input.classList.remove("error");
+          board[row][col] = num;
+        }
+      }
+
+      // 渲染解答面板
+      function renderSolution() {
+        var table = document.getElementById("solution");
+        table.innerHTML = "";
+
+        for (var i = 0; i < 9; i++) {
+          var row = document.createElement("tr");
+
+          for (var j = 0; j < 9; j++) {
+            var cell = document.createElement("td");
+            var input = document.createElement("input");
+
+            input.value = solution[i][j];
+            input.classList.add("readonly");
+            input.readOnly = true;
+
+            cell.appendChild(input);
+            row.appendChild(cell);
+          }
+
+          table.appendChild(row);
+        }
+
+        table.style.display = "table";
+      }
+
+      // 隐藏解答面板
+      function hideSolution() {
+        var solutionTable = document.getElementById("solution");
+        solutionTable.style.display = "none";
+      }
 
       // 提交数独面板
       function submitBoard() {
-        var isCorrect = true;
+        var isCorrect = compareBoards(board, solution);
 
-        for (var i = 0; i < 9; i++) {
-          var solution1 = JSON.parse(JSON.stringify(boards[i])); // 复制一份数独面板
-          var so = solveSudoku(solution1);
-          //  var output = document.createElement("p");
-          //  output.textContent = "变量值: " + solution1.toString();
-          // document.body.appendChild(output);
-
-          isCorrect = compareBoards(boards[i], solution1);
-          if (!isCorrect) {
-            alert("游戏失败！");
-            break;
-          }
-        }
         if (isCorrect) {
-          alert("游戏成功！");
+          alert("成功！");
+        } else {
+          alert("失败！");
         }
       }
 
@@ -397,8 +349,9 @@
       }
 
       // 清空数独面板
-      function clearBoard(index) {
-        renderBoardForIndex(board_ini[index], index);
+      function clearBoard() {
+        board = new Array(9).fill(null).map(() => new Array(9).fill(null));
+        renderBoard();
       }
 
       // 初始化数独游戏
@@ -413,77 +366,23 @@
           var table = document.createElement("table");
           table.id = "board-" + (i + 1);
 
-          var clear = document.createElement("div");
-          clear.className = "clear";
+          var button1 = document.createElement("button");
+          button1.innerText = "查看解答";
+          button1.addEventListener("click", solveBoard);
+
           var button2 = document.createElement("button");
-          button2.innerText = "";
-          button2.addEventListener("click", clearBoard.bind(null, i));
-          var text1 = document.createElement("span");
-          text1.innerText = "清空";
-          text1.className = "text";
-
-          clear.appendChild(button2);
-          clear.appendChild(text1);
-
-          var answer = document.createElement("div");
-          answer.className = "answer";
-
-          var button4 = document.createElement("button");
-          button4.innerText = "";
-          button4.index = i;
-          button4.addEventListener("click", showSolution.bind(null, i));
-
-          var text2 = document.createElement("span");
-          text2.innerText = "查看解答";
-          text2.className = "text";
-
-          answer.appendChild(button4);
-          answer.appendChild(text2);
+          button2.innerText = "清空";
+          button2.addEventListener("click", clearBoard);
 
           sudokuDiv.appendChild(heading);
           sudokuDiv.appendChild(table);
-          sudokuDiv.appendChild(clear);
-          sudokuDiv.appendChild(answer);
+          sudokuDiv.appendChild(button1);
+          sudokuDiv.appendChild(button2);
           document.body.appendChild(sudokuDiv);
         }
 
         generateBoards();
-        var submit = document.createElement("div");
-        submit.className = "submit";
-        var button1 = document.createElement("button");
-        button1.innerText = "";
-        button1.addEventListener("click", submitBoard);
-        var text3 = document.createElement("span");
-        text3.innerText = "提交";
-        text3.className = "text";
-        submit.appendChild(button1);
-        submit.appendChild(text3);
-        document.body.appendChild(submit);
       };
-
-      // 显示数独面板的解答
-      function showSolution(index) {
-        var currentBoard = boards[index];
-        var solution = JSON.parse(JSON.stringify(currentBoard)); // 复制一份数独面板
-
-        if (solveSudoku(solution)) {
-          renderSolution(solution, index);
-        } else {
-          alert("数独面板 " + (index + 1) + " 无解！");
-        }
-      }
-
-      // 渲染解答
-      function renderSolution(solution, index) {
-        //var table = document.getElementById("board-" + (index + 1));
-        //table.innerHTML = "";
-
-        send_solution = solution.toString();
-
-        var url =
-          "answer.html?variableName=" + encodeURIComponent(send_solution);
-        window.open(url, "targetWindow");
-      }
 
       // 生成多个数独面板
       function generateBoards() {
@@ -503,8 +402,6 @@
             removeNumbers(currentBoard, 50);
           }
           renderBoardForIndex(currentBoard, i);
-          boards.push(currentBoard);
-          board_ini.push(currentBoard);
         }
       }
 
@@ -524,13 +421,9 @@
               input.value = board[i][j];
               input.classList.add("readonly");
               input.readOnly = true;
+            } else {
+              input.addEventListener("input", validateInput.bind(null, i, j));
             }
-            //            else {
-            //           input.addEventListener(
-            //             "input",
-            //            validateInput.bind(null, index, i, j)
-            //         );
-            //      }
 
             cell.appendChild(input);
             row.appendChild(cell);
