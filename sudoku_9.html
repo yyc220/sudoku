@@ -5,12 +5,6 @@
     <style>
       .sudoku {
         display: inline-block;
-        /*margin: 30px;
-        margin-top: 5px;
-        margin-bottom: 5px;
-        left: 30%;
-        top: 30%;
-        transform: translate(30%, 0%);*/
         width: 33%;
       }
 
@@ -20,7 +14,6 @@
         /* 使用独立的边框，使分隔线可以自定义样式 */
         border-spacing: 1px;
         /* 设置每个方框之间的距离 */
-        font-size: 2px;
         margin-bottom: 5px;
         margin: auto;
         width: 85%;
@@ -28,15 +21,20 @@
       }
 
       td {
-        padding: 3px;
+        padding: 4px;
         /* 调整方框内的内边距 */
-        background-color: rgba(255, 255, 255, 0.8);
+        background-color: rgba(255, 255, 255, 0.6);
         /* 设置方框的背景颜色及透明度 */
       }
 
       th,
       td {
         border: 1px solid rgb(13, 150, 13);
+      }
+
+      .bottom-right-border {
+        border-bottom: 3px solid rgb(13, 150, 13);
+        border-right: 3px solid rgb(13, 150, 13);
       }
 
       .bottom-border {
@@ -59,7 +57,7 @@
       }
 
       input {
-        width: 100%;
+        width: 90%;
         height: 100%;
         font-size: 18px;
         background-color: rgba(255, 255, 255, 0.1);
@@ -116,6 +114,8 @@
         /*文本变大*/
         font-size: 20px;
         font-family: youyuan;
+        border: 1px solid rgba(30, 21, 21, 0.53);
+        padding: 5px;
       }
 
       .submit button {
@@ -151,7 +151,8 @@
         color: #3d3737;
         font-family: "Times New Roman", Times, serif;
         margin-top: 20px;
-        letter-spacing: 10px; /* 调整字间距的数值 */
+        letter-spacing: 10px;
+        /* 调整字间距的数值 */
       }
 
       h2 {
@@ -471,9 +472,15 @@
           var text1 = document.createElement("span");
           text1.innerText = "清空";
           text1.className = "text";
-          text1.addEventListener("click", function () {
-            button2.click(); // 触发按钮的点击事件
-          });
+          text1.addEventListener(
+            "click",
+            (function (index) {
+              return function () {
+                button2.click(); // 触发按钮的点击事件
+                clearBoard(index); // 调用 showSolution 函数，并传递参数 index
+              };
+            })(i)
+          );
           clear.appendChild(button2);
           clear.appendChild(text1);
 
@@ -487,9 +494,16 @@
           var text2 = document.createElement("span");
           text2.innerText = "查看解答";
           text2.className = "text";
-          text2.addEventListener("click", function () {
-            button4.click(); // 触发按钮的点击事件
-          });
+          text2.addEventListener(
+            "click",
+            (function (index) {
+              return function () {
+                button4.click(); // 触发按钮的点击事件
+                showSolution(index); // 调用 showSolution 函数，并传递参数 index
+              };
+            })(i)
+          );
+
           answer.appendChild(button4);
           answer.appendChild(text2);
 
@@ -513,10 +527,16 @@
 
           for (var j = 0; j < 9; j++) {
             var cell = document.createElement("td");
-            if (i == 2 || i == 5) {
+            if (
+              (i == 2 && j == 2) ||
+              (i == 2 && j == 5) ||
+              (i == 5 && j == 2) ||
+              (i == 5 && j == 5)
+            ) {
+              cell.className = "bottom-right-border";
+            } else if (i == 2 || i == 5) {
               cell.className = "bottom-border";
-            }
-            if (j == 2 || j == 5) {
+            } else if (j == 2 || j == 5) {
               cell.className = "right-border";
             }
             var input = document.createElement("input");
@@ -597,10 +617,16 @@
           for (var j = 0; j < 9; j++) {
             var cell = document.createElement("td");
             var input = document.createElement("input");
-            if (i == 2 || i == 5) {
+            if (
+              (i == 2 && j == 2) ||
+              (i == 2 && j == 5) ||
+              (i == 5 && j == 2) ||
+              (i == 5 && j == 5)
+            ) {
+              cell.className = "bottom-right-border";
+            } else if (i == 2 || i == 5) {
               cell.className = "bottom-border";
-            }
-            if (j == 2 || j == 5) {
+            } else if (j == 2 || j == 5) {
               cell.className = "right-border";
             }
             if (board[i][j] !== null) {
