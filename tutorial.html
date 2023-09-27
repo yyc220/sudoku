@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>数独小游戏</title>
+    <style>
+      .sudoku {
+        display: inline-block;
+        margin: 10px;
+      }
+
+      table {
+        text-align: center;
+        border-collapse: collapse;
+        font-size: 24px;
+      }
+
+      td {
+        width: 40px;
+        height: 40px;
+        border: 1px solid #ccc;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>数独小游戏</h1>
+
+    <div class="sudoku">
+      <h2>每一行数字不重复</h2>
+
+      <table id="board1"></table>
+    </div>
+
+    <div class="sudoku">
+      <h2>每一列数字不重复</h2>
+
+      <table id="board2"></table>
+    </div>
+
+    <div class="sudoku">
+      <h2>每个三宫格数字不重复</h2>
+
+      <table id="board3"></table>
+    </div>
+
+    <script>
+      var board1 = [];
+      var board2 = [];
+      var board3 = [];
+
+      // 生成数独面板
+      function generateBoard() {
+        // 初始化数独数组
+        board1 = [
+          [5, 3, 4, 6, 7, 8, 9, 1, 2],
+          [null, null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null, null],
+        ];
+
+        board2 = [
+          [5, null, null, null, null, null, null, null, null],
+          [6, null, null, null, null, null, null, null, null],
+          [1, null, null, null, null, null, null, null, null],
+          [8, null, null, null, null, null, null, null, null],
+          [4, null, null, null, null, null, null, null, null],
+          [7, null, null, null, null, null, null, null, null],
+          [9, null, null, null, null, null, null, null, null],
+          [2, null, null, null, null, null, null, null, null],
+          [3, null, null, null, null, null, null, null, null],
+        ];
+
+        board3 = [
+          [5, 3, 4, null, null, null, null, null, null],
+          [7, 2, 6, null, null, null, null, null, null],
+          [1, 8, 9, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null, null],
+        ];
+
+        // 渲染数独面板
+        renderBoard(1, board1, "board1");
+        renderBoard(2, board2, "board2");
+        renderBoard(3, board3, "board3");
+      }
+
+      // 渲染数独面板
+      function renderBoard(boardNumber, currentBoard, tableId) {
+        var table = document.getElementById(tableId);
+        table.innerHTML = "";
+
+        for (var i = 0; i < 9; i++) {
+          var row = document.createElement("tr");
+
+          for (var j = 0; j < 9; j++) {
+            var cell = document.createElement("td");
+            cell.innerText = currentBoard[i][j];
+
+            row.appendChild(cell);
+          }
+
+          table.appendChild(row);
+        }
+
+        console.log("解答面板 " + boardNumber + " 已创建。");
+      }
+
+      window.onload = function () {
+        generateBoard();
+      };
+    </script>
+    <div class="sudoku">
+      <h2>请根据以上规则填满九宫格</h2>
+    </div>
+  </body>
+</html>

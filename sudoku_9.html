@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>数独小游戏</title>
+    <style>
+      .sudoku {
+        display: inline-block;
+        margin: 10px;
+      }
+
+      table {
+        text-align: center;
+        border-collapse: collapse;
+        font-size: 24px;
+      }
+
+      td {
+        width: 40px;
+        height: 40px;
+        border: 1px solid #ccc;
+      }
+
+      input {
+        width: 100%;
+        height: 100%;
+        font-size: 24px;
+        border: none;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      .readonly {
+        background-color: #eee;
+      }
+
+      .error {
+        color: red;
+      }
+
+      button {
+        display: block;
+        font-size: 20px;
+        margin-top: 10px;
+        padding: 10px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>数独小游戏</h1>
+    <script>
+      // 获取难度等级
+      const urlParams = new URLSearchParams(window.location.search);
+      const difficulty = urlParams.get("difficulty");
+
+      // 添加难度head
+      var heading = document.createElement("h2");
+      var diff;
+      switch (difficulty) {
+        case "easy":
+          diff = "简单";
+          break;
+        case "medium":
+          diff = "中等";
+          break;
+        case "hard":
+          diff = "困难";
+          break;
+      }
+      heading.innerText = "难度等级：" + diff;
+      document.body.appendChild(heading);
+
+      // 设置面板
+      var board_ini = [];
+      var send_solution;
+      var boards = [];
+
+      // 打乱数独面板
+      function shuffleBoard(board) {
+        for (var i = 0; i < 9; i++) {
+          var r1 = Math.floor(Math.random() * 3);
+          var r2 = Math.floor(Math.random() * 3);
+          swapRows(board, i * 3 + r1, i * 3 + r2);
+        }
+
+        // 随机交换列
+        for (var i = 0; i < 9; i++) {
+          var c1 = Math.floor(Math.random() * 3);
+          var c2 = Math.floor(Math.random() * 3);
+          swapColumns(board, i * 3 + c1, i * 3 + c2);
+        }
+      }
+
+      // 交换两行
+      function swapRows(board, row1, row2) {
+        var temp = board[row1];
+        board[row1] = board[row2];
+        board[row2] = temp;
+      }
+
+      // 交换两列
+      function swapColumns(board, col1, col2) {
+        for (var i = 0; i < 9; i++) {
+          var temp = board[i][col1];
+          board[i][col1] = board[i][col2];
+          board[i][col2] = temp;
+        }
+      }
+
+      // 用回溯法解答数独
+      function solveSudoku(board) {
+        var emptyCell = findEmptyCell(board);
+
+        if (!emptyCell) {
+          return true;
+        }
+
+        var row = emptyCell.row;
+        var col = emptyCell.col;
+
+        for (var num = 1; num <= 9; num++) {
+          if (isValidMove(board, row, col, num)) {
+            board[row][col] = num;
+
+            if (solveSudoku(board)) {
+              return true;
+            }
+
+            board[row][col] = null;
+          }
+        }
+
+        return false;
+      }
+
+      // 检查移动是否合法
+      function isValidMove(board, row, col, num) {
+        // 检查所在行是否存在重复数字
+        for (var i = 0; i < 9; i++) {
+          if (board[row][i] === num) {
+            return false;
+          }
+        }
+
+        // 检查所在列是否存在重复数字
+        for (var i = 0; i < 9; i++) {
+          if (board[i][col] === num) {
+            return false;
+          }
+        }
+
+        // 计算所在的3x3区域的起始位置
+        var startRow = Math.floor(row / 3) * 3;
+        var startCol = Math.floor(col / 3) * 3;
+
+        // 检查3x3区域是否存在重复数字
+        for (var i = 0; i < 3; i++) {
+          for (var j = 0; j < 3; j++) {
+            if (board[startRow + i][startCol + j] === num) {
+              return false;
+            }
+          }
+        }
+
+        return true;
+      }
+
+      // 查找空单元格
+      function findEmptyCell(board) {
+        for (var i = 0; i < 9; i++) {
+          for (var j = 0; j < 9; j++) {
+            if (board[i][j] === null) {
+              return {
+                row: i,
+                col: j,
+              };
+            }
+          }
+        }
+
+        return null;
+      }
+
+      // 删除指定数量的数字
+      function removeNumbers(board, count) {
+        var cells = [];
+
+        for (var i = 0; i < 9; i++) {
+          for (var j = 0; j < 9; j++) {
+            cells.push({
+              row: i,
+              col: j,
+            });
+          }
+        }
+
+        while (count > 0 && cells.length > 0) {
+          var index = Math.floor(Math.random() * cells.length);
+          var cell = cells.splice(index, 1)[0];
+          var row = cell.row;
+          var col = cell.col;
+
+          var num = board[row][col];
+          board[row][col] = null;
+
+          var copy = JSON.parse(JSON.stringify(board));
+          var solutionCount = 0;
+
+          solveSudoku(copy);
+
+          if (hasUniqueSolution(copy)) {
+            count--;
+          } else {
+            board[row][col] = num;
+          }
+        }
+      }
+
+      // 判断数独是否有唯一解
+      function hasUniqueSolution(board) {
+        var copy = JSON.parse(JSON.stringify(board));
+        return solveSudoku(copy) && isBoardFilled(copy);
+      }
+
+      // 判断数独面板是否已填满
+      function isBoardFilled(board) {
+        for (var i = 0; i < 9; i++) {
+          for (var j = 0; j < 9; j++) {
+            if (board[i][j] === null) {
+              return false;
+            }
+          }
+        }
+
+        return true;
+      }
+
+      // 验证用户输入
+      function validateInput(index, row, col) {
+        var input = event.target;
+        var num = parseInt(input.value);
+
+        if (
+          isNaN(num) ||
+          num < 1 ||
+          num > 9 ||
+          !isValidMove(boards[index], row, col, num)
+        ) {
+          input.classList.add("error");
+        } else {
+          input.classList.remove("error");
+          boards[index][row][col] = num;
+        }
+      }
+
+      // 提交数独面板
+      function submitBoard() {
+        var isCorrect = true;
+
+        for (var i = 0; i < 9; i++) {
+          var solution1 = JSON.parse(JSON.stringify(boards[i])); // 复制一份数独面板
+          var so = solveSudoku(solution1);
+          //  var output = document.createElement("p");
+          //  output.textContent = "变量值: " + solution1.toString();
+          // document.body.appendChild(output);
+
+          isCorrect = compareBoards(boards[i], solution1);
+          if (!isCorrect) {
+            alert("游戏失败！");
+            break;
+          }
+        }
+        if (isCorrect) {
+          alert("游戏成功！");
+        }
+      }
+
+      // 比较数独面板和解答面板
+      function compareBoards(board1, board2) {
+        for (var i = 0; i < 9; i++) {
+          for (var j = 0; j < 9; j++) {
+            if (board1[i][j] !== board2[i][j]) {
+              return false;
+            }
+          }
+        }
+
+        return true;
+      }
+
+      // 清空数独面板
+      function clearBoard(index) {
+        renderBoardForIndex(boards[index], index);
+      }
+
+      // 初始化数独游戏
+      window.onload = function () {
+        for (var i = 0; i < 9; i++) {
+          var sudokuDiv = document.createElement("div");
+          sudokuDiv.className = "sudoku";
+
+          var heading = document.createElement("h2");
+          heading.innerText = "数独面板 " + (i + 1);
+
+          var table = document.createElement("table");
+          table.id = "board-" + (i + 1);
+
+          var button2 = document.createElement("button");
+          button2.innerText = "清空";
+          button2.addEventListener("click", clearBoard.bind(null, i));
+
+          var button4 = document.createElement("button");
+          button4.innerText = "查看解答";
+          button4.index = i;
+          button4.addEventListener("click", showSolution.bind(null, i));
+
+          sudokuDiv.appendChild(heading);
+          sudokuDiv.appendChild(table);
+
+          sudokuDiv.appendChild(button2);
+          sudokuDiv.appendChild(button4);
+          document.body.appendChild(sudokuDiv);
+        }
+        generateBoards();
+
+        var button1 = document.createElement("button");
+        button1.innerText = "提交";
+        button1.addEventListener("click", submitBoard);
+        document.body.appendChild(button1);
+      };
+
+      // 显示数独面板的解答
+      function showSolution(index) {
+        var currentBoard = boards[index];
+        var solution = JSON.parse(JSON.stringify(currentBoard)); // 复制一份数独面板
+
+        if (solveSudoku(solution)) {
+          renderSolution(solution, index);
+        } else {
+          alert("数独面板 " + (index + 1) + " 无解！");
+        }
+      }
+
+      // 渲染解答
+      function renderSolution(solution, index) {
+        //var table = document.getElementById("board-" + (index + 1));
+        //table.innerHTML = "";
+
+        send_solution = solution.toString();
+
+        var url =
+          "file:///D:/%E6%A1%8C%E9%9D%A2/sudoku!/new.html?variableName=" +
+          encodeURIComponent(send_solution);
+        window.open(url, "targetWindow");
+      }
+
+      // 生成多个数独面板
+      function generateBoards() {
+        for (var i = 0; i < 9; i++) {
+          var currentBoard = new Array(9)
+            .fill(null)
+            .map(() => new Array(9).fill(null));
+          solveSudoku(currentBoard);
+          shuffleBoard(currentBoard);
+
+          //根据难度删除不同数量的数字
+          if (difficulty === "easy") {
+            removeNumbers(currentBoard, 30);
+          } else if (difficulty === "medium") {
+            removeNumbers(currentBoard, 40);
+          } else if (difficulty === "hard") {
+            removeNumbers(currentBoard, 50);
+          }
+          renderBoardForIndex(currentBoard, i);
+          boards.push(currentBoard);
+        }
+      }
+
+      // 渲染每个数独面板
+      function renderBoardForIndex(board, index) {
+        var table = document.getElementById("board-" + (index + 1));
+        table.innerHTML = "";
+
+        for (var i = 0; i < 9; i++) {
+          var row = document.createElement("tr");
+
+          for (var j = 0; j < 9; j++) {
+            var cell = document.createElement("td");
+            var input = document.createElement("input");
+
+            if (board[i][j] !== null) {
+              input.value = board[i][j];
+              input.classList.add("readonly");
+              input.readOnly = true;
+            } else {
+              input.addEventListener(
+                "input",
+                validateInput.bind(null, index, i, j)
+              );
+            }
+
+            cell.appendChild(input);
+            row.appendChild(cell);
+          }
+
+          table.appendChild(row);
+        }
+      }
+    </script>
+  </body>
+</html>
