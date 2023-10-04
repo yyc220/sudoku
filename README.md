@@ -21,6 +21,10 @@
 - version5
 
   这个是最新的版本，画面更加美观，点击”清除“可以实现九宫格的清除功能。
+  
+- version6
+
+  更新版本6，使用方法：运行app.py ,点击start.html 。
 
 ## Guidance
 
