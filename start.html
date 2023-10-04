@@ -73,13 +73,22 @@
   <body>
     <h1>在线数独</h1>
     <div class="button-container">
-      <a class="difficulty-button" href="sudoku_9.html?difficulty=easy"
+      <a
+        class="difficulty-button"
+        href="templates/sudoku_9.html?difficulty=easy"
+        target="_blank"
         >简单模式</a
       >
-      <a class="difficulty-button" href="sudoku_9.html?difficulty=medium"
+      <a
+        class="difficulty-button"
+        href="templates/sudoku_9.html?difficulty=medium"
+        target="_blank"
         >中等模式</a
       >
-      <a class="difficulty-button" href="sudoku_9.html?difficulty=hard"
+      <a
+        class="difficulty-button"
+        href="templates/sudoku_9.html?difficulty=hard"
+        target="_blank"
         >困难模式</a
       >
 
@@ -87,3 +96,118 @@
     </div>
   </body>
 </html>
+
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+    <title>在线数独</title>
+    <style>
+      body {
+        background-image: url("images/start_bg.jpg");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 70px;
+        color: #3d3737;
+        font-family: "Times New Roman", Times, serif;
+        margin-top: 100px;
+        letter-spacing: 10px;
+        /* 调整字间距的数值 */
+        font-weight: bold;
+      }
+
+      .button-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 40vh;
+        /* 可根据需要调整容器高度 */
+      }
+
+      .difficulty-button {
+        margin-bottom: 20px;
+        padding: 18px 45px;
+        /* 调整按钮的内边距 */
+        font-size: 25px;
+        border: none;
+        background-color: #f2f2f2;
+        cursor: pointer;
+        color: #fff;
+        background-color: #4caf50;
+        border-radius: 5px;
+        text-decoration: none;
+        text-align: center;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+      }
+
+      .difficulty-button:hover {
+        background-color: #45a049;
+      }
+
+      .tutorial-button {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        padding: 15px 30px;
+        font-size: 20px;
+        border: none;
+        background-color: #f2f2f2;
+        cursor: pointer;
+        color: #fff;
+        background-color: #4caf50;
+        border-radius: 5px;
+        text-decoration: none;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>在线数独</h1>
+    <div class="button-container">
+      <a id="easy" class="difficulty-button">简单模式</a>
+      <a id="middle" class="difficulty-button">中等模式</a>
+      <a id="hard" class="difficulty-button">困难模式</a>
+
+      <a class="tutorial-button" href="tutorial.html">新手教程</a>
+    </div>
+
+    <script>
+      var difficulty = "";
+
+      document.getElementById("easy").addEventListener("click", function () {
+        difficulty = "easy";
+        startGame();
+      });
+      document.getElementById("middle").addEventListener("click", function () {
+        difficulty = "middle";
+        startGame();
+      });
+      document.getElementById("hard").addEventListener("click", function () {
+        difficulty = "hard";
+        startGame();
+      });
+
+      function startGame() {
+        fetch("http://127.0.0.1:5000/start_game", {
+          method: "POST",
+          body: difficulty,
+        })
+          .then((response) => response.text())
+          .then((url) => {
+            console.log("Received URL:", url);
+            alert("hello");
+            console.log("Opening URL:", url);
+            window.open(url);
+          });
+      }
+    </script>
+  </body>
+</html> -->

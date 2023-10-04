@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5c871a40-8104-4cdc-b59b-d5c9dfae56b5}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>app.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="backup\sudoku_9.html" />
+    <Content Include="images\bg6.jpg" />
+    <Content Include="images\game_bg.png" />
+    <Content Include="images\icon_biscuit.png" />
+    <Content Include="images\icon_eyu.png" />
+    <Content Include="images\icon_pig.png" />
+    <Content Include="images\icon_star.png" />
+    <Content Include="images\icon_xiaobai.png" />
+    <Content Include="images\icon_xiaokui.png" />
+    <Content Include="images\icon_xiaoxin.png" />
+    <Content Include="images\start_bg.jpg" />
+    <Content Include="images\tutor.jpg" />
+    <Content Include="start.html" />
+    <Content Include="templates\answer.html" />
+    <Content Include="templates\answers.html" />
+    <Content Include="templates\images\bg6.jpg" />
+    <Content Include="templates\images\game_bg.png" />
+    <Content Include="templates\images\icon_biscuit.png" />
+    <Content Include="templates\images\icon_eyu.png" />
+    <Content Include="templates\images\icon_pig.png" />
+    <Content Include="templates\images\icon_star.png" />
+    <Content Include="templates\images\icon_xiaobai.png" />
+    <Content Include="templates\images\icon_xiaokui.png" />
+    <Content Include="templates\images\icon_xiaoxin.png" />
+    <Content Include="templates\images\start_bg.jpg" />
+    <Content Include="templates\images\tutor.jpg" />
+    <Content Include="templates\sudoku_9.html" />
+    <Content Include="templates\xxx.html" />
+    <Content Include="tutorial.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="app.py" />
+    <Compile Include="generate.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="backup" />
+    <Folder Include="images" />
+    <Folder Include="templates" />
+    <Folder Include="templates\images" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>
