@@ -1,10 +1,9 @@
-
 import copy
 import threading
 import json
 
 from flask import Flask, render_template, request,redirect,url_for,make_response,jsonify
-from generate import generateBoards, removeNumbers
+from generate import generateSudoku, removeNumbers
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -33,10 +32,10 @@ def index():
 
     # 定义生成数独的函数
     def generate_sudoku():
-        sudoku = generateBoards()
-        dighole = copy.deepcopy(sudoku)
-        removeNumbers(dighole, count)
-        return (sudoku, dighole)
+        sudoku = generateSudoku()
+        re_sudo = copy.deepcopy(sudoku)
+        removeNumbers(re_sudo, count)
+        return (sudoku, re_sudo)
 
     # 创建九个线程，每个线程生成一个数独谜题并将其保存到列表中
     threads = []

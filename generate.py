@@ -3,100 +3,62 @@ import sys
 import copy
 
 
-# 交换两行
-def swapRows(board, row1, row2):
-    if 0 <= row1 < 9 and 0 <= row2 < 9:
-        board[row1], board[row2] = board[row2], board[row1]
+def generateSudoku():
+    # 初始化一个空的数独棋盘
+    board = [[0] * 9 for _ in range(9)]
+
+    # 使用回溯法填充数独棋盘
+    solveSudoku(board)
+
+    return board
 
 
-# 交换两列
-def swapColumns(board, col1, col2):
-    if 0 <= col1 < 9 and 0 <= col2 < 9:
-        for i in range(9):
-            temp = board[i][col1]
-            board[i][col1] = board[i][col2]
-            board[i][col2] = temp
-
-
-# 打乱数独面板
-def shuffleBoard(board):
-    for i in range(9):
-        r1 = random.randint(0, 2)
-        r2 = random.randint(0, 2)
-        swapRows(board, i * 3 + r1, i * 3 + r2)
-
-    for i in range(9):
-        c1 = random.randint(0, 2)
-        c2 = random.randint(0, 2)
-        swapColumns(board, i * 3 + c1, i * 3 + c2)
-
-
-# 检查移动是否合法
-def isValidMove(board, row, col, num):
-    for i in range(9):
-        if board[row][i] == num:
-            return False
-
-    for i in range(9):
-        if board[i][col] == num:
-            return False
-
-    startRow = (row // 3) * 3
-    startCol = (col // 3) * 3
-
-    for i in range(3):
-        for j in range(3):
-            if board[startRow + i][startCol + j] == num:
-                return False
-
-    return True
-
-
-# 查找空单元格
-def findEmptyCell(board):
-    for i in range(9):
-        for j in range(9):
-            if board[i][j] is None:
-                return {
-                    "row": i,
-                    "col": j
-                }
-    return None
-
-
-# 用回溯法解答数独
 def solveSudoku(board):
-    emptyCell = findEmptyCell(board)
+    # 查找空白位置
+    row, col = findEmptyPosition(board)
 
-    if not emptyCell:
+    # 如果没有空白位置，表示数独已填满
+    if row == -1 and col == -1:
         return True
 
-    row = emptyCell["row"]
-    col = emptyCell["col"]
-
-    for num in range(1, 10):
+    # 尝试填入数字
+    nums = list(range(1, 10))
+    random.shuffle(nums)
+    for num in nums:
         if isValidMove(board, row, col, num):
+            # 假设填入数字num
             board[row][col] = num
 
+            # 递归填充剩余空白位置
             if solveSudoku(board):
                 return True
 
-            board[row][col] = None
+            # 如果递归未成功，则撤销之前的假设
+            board[row][col] = 0
 
+    # 所有数字都尝试过但没有成功，返回False
     return False
 
 
-# 判断数独是否有唯一解
-def hasUniqueSolution(board):
-    copy_board = copy.deepcopy(board)
-    return solveSudoku(copy_board) and isBoardFilled(copy_board)
+def findEmptyPosition(board):
+    for row in range(9):
+        for col in range(9):
+            if board[row][col] == 0:
+                return row, col
+    return -1, -1
 
 
-# 判断数独面板是否已填满
-def isBoardFilled(board):
+def isValidMove(board, row, col, num):
+    # 检查行和列
     for i in range(9):
-        for j in range(9):
-            if board[i][j] is None:
+        if board[row][i] == num or board[i][col] == num:
+            return False
+
+    # 检查所在的子区域
+    sub_row, sub_col = (row // 3) * 3, (col // 3) * 3
+    for i in range(sub_row, sub_row + 3):
+        for j in range(sub_col, sub_col + 3):
+            if board[i][j] == num:
                 return False
 
     return True
@@ -104,37 +66,19 @@ def isBoardFilled(board):
 
 # 删除指定数量的数字
 def removeNumbers(board, count):
-    cells = []
+    positions = [(row, col) for row in range(9) for col in range(9)]
+    random.shuffle(positions)
 
-    for i in range(9):
-        for j in range(9):
-            cells.append({
-                "row": i,
-                "col": j,
-            })
-
-    while count > 0 and len(cells) > 0:
-        index = random.randint(0, len(cells) - 1)
-        cell = cells.pop(index)
-        row = cell["row"]
-        col = cell["col"]
-
-        num = board[row][col]
+    for pos in positions:
+        row, col = pos
+        temp = board[row][col]
         board[row][col] = 0
 
-        copy_board = copy.deepcopy(board)
-        solutionCount = 0
+        # 检查数独是否有唯一解，若有则继续删除下一个格子，否则回复原值
+        tempBoard = [row[:] for row in board]
+        if not solveSudoku(tempBoard):
+            board[row][col] = temp
 
-        solveSudoku(copy_board)
-
-        if hasUniqueSolution(copy_board):
-            count -= 1
-        else:
-            board[row][col] = num
-
-
-def generateBoards():
-    currentBoard = [[None] * 9 for _ in range(9)]
-    solveSudoku(currentBoard)
-    shuffleBoard(currentBoard)
-    return currentBoard
+        count -= 1
+        if count == 0:
+            break
