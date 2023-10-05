@@ -3,6 +3,7 @@
 
 <head>
     <title>数独小游戏</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .sudoku {
             display: inline-block;
@@ -423,7 +424,7 @@
             var incorrectQuestions = []; // 用于记录做错的题目的数组
 
             for (var i = 0; i < 9; i++) {
-                if (boards[i] !== answers[i]) {
+                if (JSON.stringify(boards[i]) !== JSON.stringify(answers[i])) {
                     incorrectQuestions.push(i + 1);
                 }
             }
